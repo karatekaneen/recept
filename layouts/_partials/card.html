@@ -1,10 +1,15 @@
-{{/* Kort för recept, artikel eller kapitel: bild (eller lugn färgyta), titel, beskrivning. */}}
+{{/* Kort för recept, artikel eller kategori: bild, eller kategorins ikon om bild saknas; titel, beskrivning. */}}
 {{ $img := partial "image.html" (dict "page" . "width" 720) }}
+{{ $kat := "" }}
+{{ if eq .Kind "term" }}{{ if eq .Data.Plural "kategori" }}{{ $kat = .Title }}{{ end }}
+{{ else }}{{ with .Params.kategori }}{{ $kat = index . 0 }}{{ end }}{{ end }}
 <li class="card">
   <a href="{{ .RelPermalink }}">
-    <div class="media">
-      {{ with $img }}<img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="" loading="lazy">{{ end }}
-    </div>
+    {{ with $img }}
+    <div class="media"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="" loading="lazy"></div>
+    {{ else }}
+    <div class="media placeholder">{{ partial "icon.html" $kat }}</div>
+    {{ end }}
     {{ if and .IsPage (eq .Section "blogg") }}<p class="eyebrow">{{ .Date | time.Format ":date_long" }}</p>{{ end }}
     <h3>{{ .Title }}</h3>
     {{ with .Description }}<p>{{ . }}</p>{{ end }}

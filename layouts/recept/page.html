@@ -4,7 +4,7 @@
   {{ with partial "image.html" (dict "page" . "width" 2000) }}
     <figure class="hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}" data-pagefind-meta="image[src]"></figure>
   {{ else }}
-    <div style="height: 3rem"></div>
+    <div class="hero-icon">{{ partial "icon.html" (index (.Params.kategori | default (slice "")) 0) }}</div>
   {{ end }}
 
   <div class="narrow center">
