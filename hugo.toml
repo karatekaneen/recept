@@ -9,6 +9,7 @@ removePathAccents = true
 enableRobotsTXT = true
 disableKinds = ["rss"]
 summaryLength = 30
+titleCaseStyle = "firstupper"
 
 # Innehållet genereras till .build/ av scripts/build-recipes.sh.
 [module]
@@ -87,6 +88,10 @@ summaryLength = 30
       name = "Blogg"
       pageRef = "/blogg"
       weight = 20
+    [[languages.sv.menus.main]]
+      name = "Idéer"
+      pageRef = "/ideer"
+      weight = 25
     [[languages.sv.menus.main]]
       name = "Om"
       pageRef = "/om"

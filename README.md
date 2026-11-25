@@ -14,13 +14,12 @@ Allt du skriver ligger under `innehall/`, uppdelat per språk:
 innehall/
   sv/
     _index.md                startsidans text
-    forord.md, om.md         fristående sidor
+    forord.md, om.md, ideer.md   fristående sidor
     recept/
-      01-brod-och-bakat/     ett kapitel (siffran styr ordningen)
-        _index.md            kapitelinledning
-        Kanelbullar.cook     receptet
-        Kanelbullar.md       kort historia (valfri)
-        Kanelbullar.jpg      bild (valfri)
+      _index.md              text överst på receptlistan
+      Kanelbullar.cook       receptet (alla recept i samma mapp)
+      Kanelbullar.md         kort historia (valfri)
+      Kanelbullar.jpg        bild (valfri)
     blogg/
       2026-12-julbak.md
     restauranger/operakallaren/_index.md   egen text för en restaurang (valfri)
@@ -61,7 +60,7 @@ Smält @&smör i en #kastrull{} och låt svalna i ~{10%minutes}.
 
 ### Översättningar
 
-Ett engelskt recept kopplas till det svenska genom samma `id` – filnamn och titel får skilja sig (`Kanelbullar.cook` och `Cinnamon buns.cook`). Artiklar, kapitel och sidor kopplas ihop genom att ha **samma filnamn och mapp** i `sv/` och `en/`.
+Ett engelskt recept kopplas till det svenska genom samma `id` – filnamn och titel får skilja sig (`Kanelbullar.cook` och `Cinnamon buns.cook`). Recepten grupperas med `kategori` och `tags` i stället för mappar. Artiklar och sidor kopplas ihop genom att ha **samma filnamn och mapp** i `sv/` och `en/`.
 
 Kategorier översätts med ordlistan längst ned i `i18n/en.toml`:
 

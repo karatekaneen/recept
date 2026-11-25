@@ -6,11 +6,9 @@
 </header>
 
 <div class="wrap">
-{{ with site.GetPage "/recept" }}
-  {{ with .Sections }}
-  <h2 class="section-title">{{ i18n "chapters" }}</h2>
-  <ul class="grid">{{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}</ul>
-  {{ end }}
+{{ with site.Taxonomies.kategori }}
+  <h2 class="section-title">{{ i18n "kategori" }}</h2>
+  <ul class="grid">{{ range .Alphabetical }}{{ partial "card.html" .Page }}{{ end }}</ul>
 {{ end }}
 
 {{ $recipes := where site.RegularPages "Section" "recept" }}
