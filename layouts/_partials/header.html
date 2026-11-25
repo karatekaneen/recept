@@ -3,7 +3,10 @@
     <nav class="nav" aria-label="{{ i18n "mainMenu" }}">
       {{ $current := . }}
       {{ range site.Menus.main }}
+        {{/* Avsnitt utan innehåll (t.ex. en tom blogg) visas inte i menyn. */}}
+        {{ if not (and .Page (eq .Page.Kind "section") (not .Page.RegularPages)) }}
         <a href="{{ .URL }}"{{ if or ($current.IsMenuCurrent "main" .) ($current.HasMenuCurrent "main" .) }} aria-current="page"{{ end }}>{{ .Name }}</a>
+        {{ end }}
       {{ end }}
     </nav>
     <a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>

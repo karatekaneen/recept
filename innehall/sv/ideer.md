@@ -1,5 +1,6 @@
 ---
 title: Idéer att prova
+draft: true  # inte publicerad just nu; ta bort raden för att visa sidan
 description: Rätter och kombinationer som väntar på att bli recept.
 ---
 - Svartpeppar-granité med jordgubbar

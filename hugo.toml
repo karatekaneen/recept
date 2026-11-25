@@ -89,10 +89,6 @@ titleCaseStyle = "firstupper"
       pageRef = "/blogg"
       weight = 20
     [[languages.sv.menus.main]]
-      name = "Idéer"
-      pageRef = "/ideer"
-      weight = 25
-    [[languages.sv.menus.main]]
       name = "Om"
       pageRef = "/om"
       weight = 30
