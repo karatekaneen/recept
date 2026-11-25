@@ -1,0 +1,8 @@
+<footer class="site-footer">
+  <div class="wrap">
+    © {{ now.Year }} {{ site.Title }}
+  </div>
+</footer>
+{{ $js := resources.Get "js/search.js" | js.Build (dict "minify" true) | fingerprint }}
+<script src="{{ "pagefind/pagefind-ui.js" | relURL }}" defer></script>
+<script src="{{ $js.RelPermalink }}" defer data-placeholder="{{ i18n "searchPlaceholder" }}" data-bundle="{{ "pagefind/" | relURL }}"></script>

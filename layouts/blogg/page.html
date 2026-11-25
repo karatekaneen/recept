@@ -1,0 +1,26 @@
+{{ define "main" }}
+<article data-pagefind-body>
+  <header class="prose">
+    <p class="muted small"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time></p>
+    <h1>{{ .Title }}</h1>
+  </header>
+  {{ with partial "image.html" (dict "page" . "width" 1600) }}
+    <figure class="recipe-hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}" data-pagefind-meta="image[src]"></figure>
+  {{ end }}
+  <div class="prose">{{ .Content }}</div>
+  {{ partial "labels.html" . }}
+  {{ partial "pagefind-filters.html" . }}
+
+  {{/* Receptkort för recepten artikeln nämner. */}}
+  {{ $cards := slice }}
+  {{ range .Params.recept }}
+    {{ with partial "recipe-by-id.html" . }}{{ $cards = $cards | append . }}{{ end }}
+  {{ end }}
+  {{ with $cards }}
+  <section class="read-more">
+    <h2>{{ i18n "recipesInArticle" }}</h2>
+    <ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
+  </section>
+  {{ end }}
+</article>
+{{ end }}

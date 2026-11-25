@@ -1,0 +1,13 @@
+{{/* Kort för recept eller artikel: bild (eller lugn färgyta), titel, beskrivning. */}}
+{{ $img := partial "image.html" (dict "page" . "width" 640) }}
+<li class="card">
+  <a href="{{ .RelPermalink }}">
+    <div class="media">
+      {{ with $img }}<img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}" loading="lazy">{{ end }}
+    </div>
+    <div class="body">
+      <h3>{{ .Title }}</h3>
+      {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    </div>
+  </a>
+</li>

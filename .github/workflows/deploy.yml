@@ -1,0 +1,67 @@
+name: Bygg och publicera
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  HUGO_VERSION: 0.152.2
+  COOKCLI_VERSION: 0.41.1
+  PAGEFIND_VERSION: 1.4.0
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installera Hugo
+        run: |
+          curl -sSfL -o hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i hugo.deb && rm hugo.deb
+          hugo version
+
+      - name: Installera CookCLI
+        run: |
+          curl -sSfL -o cook.tgz "https://github.com/cooklang/cookcli/releases/download/v${COOKCLI_VERSION}/cook-${COOKCLI_VERSION}-linux-x86_64-gnu.tar.gz"
+          mkdir -p cook-dl "$HOME/.local/bin" && tar -xzf cook.tgz -C cook-dl
+          find cook-dl -type f -name cook -exec install -m 755 {} "$HOME/.local/bin/cook" \;
+          rm -rf cook.tgz cook-dl
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/cook" --version
+
+      - name: Recept → JSON
+        run: ./scripts/build-recipes.sh
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Bygg sajten
+        run: hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Bygg sökindex
+        run: npx --yes "pagefind@${PAGEFIND_VERSION}" --site public
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

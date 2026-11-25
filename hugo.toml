@@ -1,0 +1,126 @@
+# Grundinställningar för receptsamlingen.
+# baseURL sätts automatiskt av GitHub Actions vid publicering.
+baseURL = "https://example.org/"
+title = "Receptsamling"
+
+defaultContentLanguage = "sv"
+defaultContentLanguageInSubdir = true
+removePathAccents = true
+enableRobotsTXT = true
+disableKinds = ["rss"]
+summaryLength = 30
+
+# Innehållet genereras till .build/ av scripts/build-recipes.sh.
+[module]
+  [[module.mounts]]
+    source = ".build/content/sv"
+    target = "content"
+    lang = "sv"
+  [[module.mounts]]
+    source = ".build/content/en"
+    target = "content"
+    lang = "en"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "i18n"
+    target = "i18n"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+
+# Etikettsorter. Lägg till en ny sort med en rad här (och adresser nedan).
+# Nyckeln till höger är fältnamnet i receptens metadata.
+[taxonomies]
+  tag = "tags"
+  restaurang = "restaurang"
+  forfattare = "forfattare"
+  kategori = "kategori"
+
+[params]
+  # Sorterna som visas som etiketter på recept och artiklar, i den här ordningen.
+  etiketter = ["kategori", "restaurang", "forfattare", "tags"]
+
+[imaging]
+  quality = 80
+  resampleFilter = "Lanczos"
+
+[markup.goldmark.renderer]
+  unsafe = false
+
+[outputs]
+  home = ["html"]
+  section = ["html"]
+  taxonomy = ["html"]
+  term = ["html"]
+
+[languages]
+  [languages.sv]
+    languageName = "Svenska"
+    languageCode = "sv-SE"
+    weight = 1
+    [languages.sv.permalinks.page]
+      recept = "/recept/:slug/"
+      blogg = "/blogg/:slug/"
+    [languages.sv.permalinks.section]
+      recept = "/recept/:sections[1:]/"
+      blogg = "/blogg/"
+    [languages.sv.permalinks.taxonomy]
+      tags = "/taggar/"
+      restaurang = "/restauranger/"
+      forfattare = "/forfattare/"
+      kategori = "/kategorier/"
+    [languages.sv.permalinks.term]
+      tags = "/taggar/:slug/"
+      restaurang = "/restauranger/:slug/"
+      forfattare = "/forfattare/:slug/"
+      kategori = "/kategorier/:slug/"
+    [[languages.sv.menus.main]]
+      name = "Recept"
+      pageRef = "/recept"
+      weight = 10
+    [[languages.sv.menus.main]]
+      name = "Blogg"
+      pageRef = "/blogg"
+      weight = 20
+    [[languages.sv.menus.main]]
+      name = "Om"
+      pageRef = "/om"
+      weight = 30
+
+  [languages.en]
+    languageName = "English"
+    languageCode = "en-GB"
+    weight = 2
+    [languages.en.permalinks.page]
+      recept = "/recipes/:slug/"
+      blogg = "/blog/:slug/"
+    [languages.en.permalinks.section]
+      recept = "/recipes/:sections[1:]/"
+      blogg = "/blog/"
+    [languages.en.permalinks.taxonomy]
+      tags = "/tags/"
+      restaurang = "/restaurants/"
+      forfattare = "/authors/"
+      kategori = "/categories/"
+    [languages.en.permalinks.term]
+      tags = "/tags/:slug/"
+      restaurang = "/restaurants/:slug/"
+      forfattare = "/authors/:slug/"
+      kategori = "/categories/:slug/"
+    [[languages.en.menus.main]]
+      name = "Recipes"
+      pageRef = "/recept"
+      weight = 10
+    [[languages.en.menus.main]]
+      name = "Blog"
+      pageRef = "/blogg"
+      weight = 20
+    [[languages.en.menus.main]]
+      name = "About"
+      pageRef = "/om"
+      weight = 30

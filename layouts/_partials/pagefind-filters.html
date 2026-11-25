@@ -1,0 +1,10 @@
+{{/* Dolda filtervärden för Pagefind-sökningen. */}}
+<div hidden>
+  <span data-pagefind-filter="{{ i18n "typeFilter" }}">{{ if eq .Section "recept" }}{{ i18n "recipeType" }}{{ else }}{{ i18n "articleType" }}{{ end }}</span>
+  {{ if eq .Section "recept" }}{{ with .Parent }}{{ if ne .Kind "home" }}{{ if ne .Path "/recept" }}<span data-pagefind-filter="{{ i18n "chapters" }}">{{ .Title }}</span>{{ end }}{{ end }}{{ end }}{{ end }}
+  {{ $page := . }}
+  {{ range site.Params.etiketter }}
+    {{ $tax := . }}
+    {{ range $page.GetTerms $tax }}<span data-pagefind-filter="{{ i18n (printf "%sSingular" $tax) | default (i18n "tag") }}">{{ .LinkTitle }}</span>{{ end }}
+  {{ end }}
+</div>

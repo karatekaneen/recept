@@ -1,0 +1,75 @@
+{{ define "main" }}
+{{ $r := .Params.recipe }}
+<article class="recipe" data-pagefind-body>
+  <header class="prose">
+    {{ with .Parent }}{{ if eq .Kind "section" }}<p class="muted small"><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>{{ end }}{{ end }}
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+  </header>
+
+  {{ with partial "image.html" (dict "page" . "width" 1600) }}
+    <figure class="recipe-hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}" data-pagefind-meta="image[src]"></figure>
+  {{ end }}
+
+  {{ with .Content }}<div class="story prose">{{ . }}</div>{{ end }}
+
+  {{ if or .Params.servings .Params.time }}
+  <dl class="facts">
+    {{ with .Params.servings }}<div><dt>{{ i18n "servings" }}</dt><dd>{{ . }}</dd></div>{{ end }}
+    {{ with .Params.time }}<div><dt>{{ i18n "time" }}</dt><dd>{{ . }}</dd></div>{{ end }}
+    <div><dd><button class="print-btn" type="button" onclick="window.print()">{{ i18n "print" }}</button></dd></div>
+  </dl>
+  {{ end }}
+
+  <div class="recipe-body">
+    <section class="ingredients" aria-labelledby="ingredienser">
+      <h2 id="ingredienser">{{ i18n "ingredients" }}</h2>
+      {{ range $r.sections }}
+        {{ if .ingredients }}
+          {{ with .name }}<h3>{{ . }}</h3>{{ end }}
+          <ul>
+            {{ range .ingredients }}
+            <li>{{ with .amount }}<span class="qty">{{ . }}</span> {{ end }}{{ .name }}{{ with .note }} <span class="note">({{ . }})</span>{{ end }}</li>
+            {{ end }}
+          </ul>
+        {{ end }}
+      {{ end }}
+    </section>
+
+    <section class="steps" aria-labelledby="steg">
+      <h2 id="steg">{{ i18n "steps" }}</h2>
+      {{ $multi := gt (len (where $r.sections "content" "!=" (slice))) 1 }}
+      {{ range $r.sections }}
+        {{ if .content }}
+          {{ if and $multi .name }}<h3>{{ .name }}</h3>{{ end }}
+          {{ $steps := where .content "type" "step" }}
+          {{ with $steps }}
+          <ol>{{ range . }}<li>{{ .text }}</li>{{ end }}</ol>
+          {{ end }}
+          {{ range where .content "type" "tip" }}
+          <aside class="tip"><p>{{ .text }}</p></aside>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </section>
+  </div>
+
+  {{ partial "labels.html" . }}
+  {{ partial "pagefind-filters.html" . }}
+
+  {{/* Artiklar som nämner receptet. */}}
+  {{ $id := .Params.id }}
+  {{ $posts := slice }}
+  {{ range where site.RegularPages "Section" "blogg" }}
+    {{ if in .Params.recept $id }}{{ $posts = $posts | append . }}{{ end }}
+  {{ end }}
+  {{ with $posts }}
+  <section class="read-more" data-pagefind-ignore>
+    <h2>{{ i18n "readMore" }}</h2>
+    <ul class="list-plain">
+      {{ range . }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Description }} <span class="muted">– {{ . }}</span>{{ end }}</li>{{ end }}
+    </ul>
+  </section>
+  {{ end }}
+</article>
+{{ end }}

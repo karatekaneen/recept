@@ -1,0 +1,27 @@
+{{ define "main" }}
+<section class="prose">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+</section>
+
+{{ with site.GetPage "/recept" }}
+  {{ with .Sections }}
+  <h2>{{ i18n "chapters" }}</h2>
+  <ul class="grid">
+    {{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}
+  </ul>
+  {{ end }}
+{{ end }}
+
+{{ $recipes := where site.RegularPages "Section" "recept" }}
+{{ with first 6 $recipes.ByDate.Reverse }}
+<h2>{{ i18n "latestRecipes" }}</h2>
+<ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
+{{ end }}
+
+{{ $posts := where site.RegularPages "Section" "blogg" }}
+{{ with first 3 $posts.ByDate.Reverse }}
+<h2>{{ i18n "latestArticles" }}</h2>
+<ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
+{{ end }}
+{{ end }}

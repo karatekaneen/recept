@@ -1,0 +1,3 @@
+{{- /* {{< recept kanelbullar >}} länkar till receptet på sidans språk. */ -}}
+{{- $id := .Get 0 -}}
+{{- with partial "recipe-by-id.html" $id -}}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{- else -}}{{- warnf "Receptet %q finns inte (%s)" $id $.Page.File.Path -}}{{ $id }}{{- end -}}
