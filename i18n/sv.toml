@@ -34,3 +34,7 @@ forfattare = "Författare"
 forfattareSingular = "Författare"
 kategori = "Kategorier"
 kategoriSingular = "Kategori"
+
+mainMenu = "Huvudmeny"
+from = "Från"
+method = "Tillagning"

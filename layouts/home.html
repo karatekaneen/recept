@@ -1,27 +1,28 @@
 {{ define "main" }}
-<section class="prose">
+<header class="narrow center" style="padding-top: 3rem">
   <h1>{{ .Title }}</h1>
-  {{ .Content }}
-</section>
+  {{ with .Content }}<div class="lede" style="margin-top: 1.25rem">{{ . }}</div>{{ end }}
+  <hr class="rule">
+</header>
 
+<div class="wrap">
 {{ with site.GetPage "/recept" }}
   {{ with .Sections }}
-  <h2>{{ i18n "chapters" }}</h2>
-  <ul class="grid">
-    {{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}
-  </ul>
+  <h2 class="section-title">{{ i18n "chapters" }}</h2>
+  <ul class="grid">{{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}</ul>
   {{ end }}
 {{ end }}
 
 {{ $recipes := where site.RegularPages "Section" "recept" }}
 {{ with first 6 $recipes.ByDate.Reverse }}
-<h2>{{ i18n "latestRecipes" }}</h2>
+<h2 class="section-title">{{ i18n "latestRecipes" }}</h2>
 <ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
 {{ end }}
 
 {{ $posts := where site.RegularPages "Section" "blogg" }}
 {{ with first 3 $posts.ByDate.Reverse }}
-<h2>{{ i18n "latestArticles" }}</h2>
+<h2 class="section-title">{{ i18n "latestArticles" }}</h2>
 <ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
 {{ end }}
+</div>
 {{ end }}

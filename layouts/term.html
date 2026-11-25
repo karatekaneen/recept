@@ -1,23 +1,23 @@
 {{ define "main" }}
-<header class="prose">
-  <p class="muted small"><a href="{{ .Parent.RelPermalink }}">{{ i18n .Data.Plural | default .Parent.Title }}</a></p>
+{{ with partial "image.html" (dict "page" . "width" 2000) }}
+  <figure class="hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}"></figure>
+{{ end }}
+<header class="narrow center" style="padding-top: 3rem">
+  <p class="eyebrow"><a href="{{ .Parent.RelPermalink }}">{{ i18n (printf "%sSingular" .Data.Plural) | default .Parent.Title }}</a></p>
   <h1>{{ .Title }}</h1>
-  {{ with partial "image.html" (dict "page" . "width" 1200) }}
-    <figure class="recipe-hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}"></figure>
-  {{ end }}
-  {{ .Content }}
+  {{ with .Content }}<div class="lede" style="margin-top: 1.25rem">{{ . }}</div>{{ end }}
   {{ with .Params.link }}<p><a href="{{ . }}" rel="noopener">{{ i18n "link" }}</a></p>{{ end }}
+  <hr class="rule">
 </header>
 
-{{ $recipes := where .Pages "Section" "recept" }}
-{{ with $recipes }}
-<h2>{{ i18n "recipes" }}</h2>
+<div class="wrap">
+{{ with where .Pages "Section" "recept" }}
+<h2 class="section-title">{{ i18n "recipes" }}</h2>
 <ul class="grid">{{ range .ByTitle }}{{ partial "card.html" . }}{{ end }}</ul>
 {{ end }}
-
-{{ $posts := where .Pages "Section" "blogg" }}
-{{ with $posts }}
-<h2>{{ i18n "articles" }}</h2>
+{{ with where .Pages "Section" "blogg" }}
+<h2 class="section-title">{{ i18n "articles" }}</h2>
 <ul class="grid">{{ range .ByDate.Reverse }}{{ partial "card.html" . }}{{ end }}</ul>
 {{ end }}
+</div>
 {{ end }}

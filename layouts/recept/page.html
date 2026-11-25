@@ -1,75 +1,79 @@
 {{ define "main" }}
 {{ $r := .Params.recipe }}
 <article class="recipe" data-pagefind-body>
-  <header class="prose">
-    {{ with .Parent }}{{ if eq .Kind "section" }}<p class="muted small"><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>{{ end }}{{ end }}
+  {{ with partial "image.html" (dict "page" . "width" 2000) }}
+    <figure class="hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}" data-pagefind-meta="image[src]"></figure>
+  {{ else }}
+    <div style="height: 3rem"></div>
+  {{ end }}
+
+  <div class="narrow center">
+    {{ with .Parent }}{{ if eq .Kind "section" }}<p class="eyebrow" data-pagefind-ignore><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>{{ end }}{{ end }}
     <h1>{{ .Title }}</h1>
-    {{ with .Description }}<p>{{ . }}</p>{{ end }}
-  </header>
+    {{ with .Content }}<div class="story lede">{{ . }}</div>{{ else }}{{ with .Description }}<p class="story lede">{{ . }}</p>{{ end }}{{ end }}
 
-  {{ with partial "image.html" (dict "page" . "width" 1600) }}
-    <figure class="recipe-hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }}" data-pagefind-meta="image[src]"></figure>
-  {{ end }}
+    <hr class="rule">
 
-  {{ with .Content }}<div class="story prose">{{ . }}</div>{{ end }}
-
-  {{ if or .Params.servings .Params.time }}
-  <dl class="facts">
-    {{ with .Params.servings }}<div><dt>{{ i18n "servings" }}</dt><dd>{{ . }}</dd></div>{{ end }}
-    {{ with .Params.time }}<div><dt>{{ i18n "time" }}</dt><dd>{{ . }}</dd></div>{{ end }}
-    <div><dd><button class="print-btn" type="button" onclick="window.print()">{{ i18n "print" }}</button></dd></div>
-  </dl>
-  {{ end }}
-
-  <div class="recipe-body">
-    <section class="ingredients" aria-labelledby="ingredienser">
-      <h2 id="ingredienser">{{ i18n "ingredients" }}</h2>
-      {{ range $r.sections }}
-        {{ if .ingredients }}
-          {{ with .name }}<h3>{{ . }}</h3>{{ end }}
-          <ul>
-            {{ range .ingredients }}
-            <li>{{ with .amount }}<span class="qty">{{ . }}</span> {{ end }}{{ .name }}{{ with .note }} <span class="note">({{ . }})</span>{{ end }}</li>
-            {{ end }}
-          </ul>
-        {{ end }}
-      {{ end }}
-    </section>
-
-    <section class="steps" aria-labelledby="steg">
-      <h2 id="steg">{{ i18n "steps" }}</h2>
-      {{ $multi := gt (len (where $r.sections "content" "!=" (slice))) 1 }}
-      {{ range $r.sections }}
-        {{ if .content }}
-          {{ if and $multi .name }}<h3>{{ .name }}</h3>{{ end }}
-          {{ $steps := where .content "type" "step" }}
-          {{ with $steps }}
-          <ol>{{ range . }}<li>{{ .text }}</li>{{ end }}</ol>
-          {{ end }}
-          {{ range where .content "type" "tip" }}
-          <aside class="tip"><p>{{ .text }}</p></aside>
-          {{ end }}
-        {{ end }}
-      {{ end }}
-    </section>
+    <dl class="facts" data-pagefind-ignore>
+      {{ with .Params.servings }}<div><dt>{{ i18n "servings" }}</dt><dd>{{ . }}</dd></div>{{ end }}
+      {{ with .Params.time }}<div><dt>{{ i18n "time" }}</dt><dd>{{ . }}</dd></div>{{ end }}
+      {{ with .Params.forfattare }}<div><dt>{{ i18n "from" }}</dt><dd>{{ delimit . ", " }}</dd></div>{{ end }}
+      <div><dt class="visually-hidden">{{ i18n "print" }}</dt><dd><button class="print-btn" type="button" onclick="window.print()">{{ i18n "print" }}</button></dd></div>
+    </dl>
   </div>
 
-  {{ partial "labels.html" . }}
-  {{ partial "pagefind-filters.html" . }}
+  <div class="narrow">
+    <section class="recipe-section" aria-labelledby="ingredienser">
+      <h2 id="ingredienser">{{ i18n "ingredients" }}</h2>
+      <div class="ingredient-groups">
+        {{ range $r.sections }}
+          {{ if .ingredients }}
+          <div>
+            {{ with .name }}<h3>{{ . }}</h3>{{ end }}
+            <ul class="ingredients">
+              {{ range .ingredients }}
+              <li><span>{{ .name }}{{ with .note }}<span class="note">, {{ . }}</span>{{ end }}</span><span class="leader" aria-hidden="true"></span><span class="qty">{{ .amount }}</span></li>
+              {{ end }}
+            </ul>
+          </div>
+          {{ end }}
+        {{ end }}
+      </div>
+    </section>
 
-  {{/* Artiklar som nämner receptet. */}}
-  {{ $id := .Params.id }}
-  {{ $posts := slice }}
-  {{ range where site.RegularPages "Section" "blogg" }}
-    {{ if in .Params.recept $id }}{{ $posts = $posts | append . }}{{ end }}
-  {{ end }}
-  {{ with $posts }}
-  <section class="read-more" data-pagefind-ignore>
-    <h2>{{ i18n "readMore" }}</h2>
-    <ul class="list-plain">
-      {{ range . }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Description }} <span class="muted">– {{ . }}</span>{{ end }}</li>{{ end }}
-    </ul>
-  </section>
-  {{ end }}
+    <section class="recipe-section" aria-labelledby="tillagning">
+      <h2 id="tillagning">{{ i18n "method" }}</h2>
+      {{ $withSteps := slice }}
+      {{ range $r.sections }}{{ if where .content "type" "step" }}{{ $withSteps = $withSteps | append . }}{{ end }}{{ end }}
+      {{ $multi := gt (len $withSteps) 1 }}
+      {{ range $withSteps }}
+        <div class="steps-group">
+          {{ if and $multi .name }}<h3>{{ .name }}</h3>{{ end }}
+          <ol class="steps">{{ range where .content "type" "step" }}<li><p>{{ .text }}</p></li>{{ end }}</ol>
+        </div>
+      {{ end }}
+      {{ range $r.sections }}
+        {{ range where .content "type" "tip" }}
+        <aside class="tip"><p class="eyebrow">{{ i18n "tips" }}</p><p>{{ .text }}</p></aside>
+        {{ end }}
+      {{ end }}
+    </section>
+
+    {{/* Artiklar som nämner receptet. */}}
+    {{ $id := .Params.id }}
+    {{ $posts := slice }}
+    {{ range where site.RegularPages "Section" "blogg" }}
+      {{ if in .Params.recept $id }}{{ $posts = $posts | append . }}{{ end }}
+    {{ end }}
+    {{ with $posts }}
+    <section class="read-more" data-pagefind-ignore>
+      <h2 class="eyebrow">{{ i18n "readMore" }}</h2>
+      <ul>{{ range . }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
+    </section>
+    {{ end }}
+
+    {{ partial "labels.html" . }}
+    {{ partial "pagefind-filters.html" . }}
+  </div>
 </article>
 {{ end }}

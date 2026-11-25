@@ -31,8 +31,10 @@
 <meta name="twitter:card" content="summary_large_image">
 {{ end }}
 
-{{ $css := resources.Get "css/main.css" | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 <link rel="stylesheet" href="{{ "pagefind/pagefind-ui.css" | relURL }}">
+{{ $css := resources.Get "css/main.css" | minify | fingerprint }}
+<link rel="preload" href="{{ "fonts/dm-serif-display-latin-400-normal.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<meta name="theme-color" content="#16130f">
 
 {{ partial "schema.html" . }}

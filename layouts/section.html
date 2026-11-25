@@ -1,19 +1,21 @@
 {{ define "main" }}
-<header class="prose">
+<header class="narrow center" style="padding-top: 3rem">
+  {{ with .Parent }}{{ if eq .Kind "section" }}<p class="eyebrow"><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>{{ end }}{{ end }}
   <h1>{{ .Title }}</h1>
-  {{ .Content }}
+  {{ with .Content }}<div class="lede" style="margin-top: 1.25rem">{{ . }}</div>{{ end }}
+  <hr class="rule">
 </header>
 
+<div class="wrap">
 {{ with .Sections }}
-<h2>{{ i18n "chapters" }}</h2>
 <ul class="grid">{{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}</ul>
 {{ end }}
 
-{{ with .Pages.ByTitle }}
-  {{ $pages := where . "Kind" "page" }}
-  {{ if eq $.Section "blogg" }}{{ $pages = $pages.ByDate.Reverse }}{{ end }}
-  {{ with $pages }}
+{{ $pages := where .Pages "Kind" "page" }}
+{{ if eq .Section "blogg" }}{{ $pages = $pages.ByDate.Reverse }}{{ else }}{{ $pages = $pages.ByTitle }}{{ end }}
+{{ with $pages }}
+  {{ if $.Sections }}<h2 class="section-title">{{ i18n "recipes" }}</h2>{{ end }}
   <ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
-  {{ end }}
 {{ end }}
+</div>
 {{ end }}

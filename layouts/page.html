@@ -1,6 +1,9 @@
 {{ define "main" }}
-<article class="prose" data-pagefind-body>
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
+<article data-pagefind-body>
+  <header class="narrow center" style="padding-top: 3rem">
+    <h1>{{ .Title }}</h1>
+    <hr class="rule">
+  </header>
+  <div class="narrow article-body">{{ .Content }}</div>
 </article>
 {{ end }}

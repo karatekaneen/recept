@@ -1,7 +1,5 @@
 <footer class="site-footer">
-  <div class="wrap">
-    © {{ now.Year }} {{ site.Title }}
-  </div>
+  <div class="wrap">© {{ now.Year }} {{ site.Title }}</div>
 </footer>
 {{ $js := resources.Get "js/search.js" | js.Build (dict "minify" true) | fingerprint }}
 <script src="{{ "pagefind/pagefind-ui.js" | relURL }}" defer></script>

@@ -44,3 +44,7 @@ kategoriSingular = "Category"
 "kategori:Bakverk" = "Pastries"
 "kategori:Soppa" = "Soup"
 "kategori:Skaldjur" = "Seafood"
+
+mainMenu = "Main menu"
+from = "From"
+method = "Method"

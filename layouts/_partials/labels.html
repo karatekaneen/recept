@@ -10,7 +10,7 @@
 {{ with $items }}
 <ul class="labels">
   {{ range . }}
-    <li><a href="{{ .page.RelPermalink }}"><span class="kind">{{ i18n (printf "%sSingular" .kind) | default (i18n "tag") }}:</span>{{ .page.LinkTitle }}</a></li>
+    <li><span class="kind">{{ i18n (printf "%sSingular" .kind) }}</span><a href="{{ .page.RelPermalink }}">{{ .page.LinkTitle }}</a></li>
   {{ end }}
 </ul>
 {{ end }}
