@@ -1,0 +1,16 @@
+{{/* Klickbara etiketter: kategori, restaurang, författare, taggar. */}}
+{{ $page := . }}
+{{ $items := slice }}
+{{ range site.Params.etiketter }}
+  {{ $tax := . }}
+  {{ range $page.GetTerms $tax }}
+    {{ $items = $items | append (dict "kind" $tax "page" .) }}
+  {{ end }}
+{{ end }}
+{{ with $items }}
+<ul class="labels">
+  {{ range . }}
+    <li><a href="{{ .page.RelPermalink }}"><span class="kind">{{ i18n (printf "%sSingular" .kind) | default (i18n "tag") }}:</span>{{ .page.LinkTitle }}</a></li>
+  {{ end }}
+</ul>
+{{ end }}

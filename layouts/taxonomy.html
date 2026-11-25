@@ -1,0 +1,8 @@
+{{ define "main" }}
+<h1>{{ i18n .Data.Plural | default .Title }}</h1>
+<ul class="list-plain">
+  {{ range .Data.Terms.Alphabetical }}
+  <li><a href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a> <span class="muted small">({{ .Count }})</span></li>
+  {{ end }}
+</ul>
+{{ end }}

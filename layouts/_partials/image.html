@@ -1,0 +1,20 @@
+{{/* Returnerar sidans bild i given bredd, eller nil.
+     Recept: params.image i sidans mapp. Artiklar: params.image bredvid artikeln. */}}
+{{ $page := .page }}
+{{ $w := .width | default 1200 }}
+{{ $res := false }}
+{{ with $page.Params.image }}
+  {{ $res = $page.Resources.Get . }}
+  {{ if not $res }}
+    {{ with $page.File }}{{ $res = resources.Get (path.Join .Dir $page.Params.image) }}{{ end }}
+  {{ end }}
+{{ end }}
+{{ $out := false }}
+{{ with $res }}
+  {{ if and (ne .MediaType.SubType "svg") (gt .Width $w) }}
+    {{ $out = .Resize (printf "%dx webp" $w) }}
+  {{ else }}
+    {{ $out = . }}
+  {{ end }}
+{{ end }}
+{{ return $out }}

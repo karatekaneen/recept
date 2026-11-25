@@ -1,0 +1,19 @@
+{{ define "main" }}
+<header class="prose">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+</header>
+
+{{ with .Sections }}
+<h2>{{ i18n "chapters" }}</h2>
+<ul class="grid">{{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}</ul>
+{{ end }}
+
+{{ with .Pages.ByTitle }}
+  {{ $pages := where . "Kind" "page" }}
+  {{ if eq $.Section "blogg" }}{{ $pages = $pages.ByDate.Reverse }}{{ end }}
+  {{ with $pages }}
+  <ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
+  {{ end }}
+{{ end }}
+{{ end }}

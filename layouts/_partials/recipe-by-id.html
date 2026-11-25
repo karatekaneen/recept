@@ -1,0 +1,4 @@
+{{/* Hittar receptet med ett visst id på aktuellt språk. */}}
+{{ $r := false }}
+{{ range first 1 (where (where site.RegularPages "Section" "recept") "Params.id" .) }}{{ $r = . }}{{ end }}
+{{ return $r }}
