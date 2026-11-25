@@ -42,6 +42,7 @@ kategori: [Bakverk]
 restaurang: [Operakällaren]
 forfattare: [Mormor Greta]
 date: 2026-11-25
+totalTime: PT3H        # valfritt, för Google (ISO 8601)
 ---
 = Deg
 @vetemjöl{8%dl}, @socker{1%dl}, @smör{100%g}(smält)
@@ -52,7 +53,8 @@ Smält @&smör i en #kastrull{} och låt svalna i ~{10%minutes}.
 ```
 
 - `title` och `id` är obligatoriska. `id` är receptets fasta namn och är **samma i alla språk**.
-- Första stycket i ett avsnitt listar ingredienserna; stegen refererar till dem med `@&`.
+- Första stycket i ett avsnitt listar ingredienserna; stegen refererar till dem med `@&`. Ett ord: `@&smör`. Flera ord behöver klamrar: `@&gula ärtor{}`. Hänvisningar visas i stegen men inte en gång till i ingredienslistan.
+- Steg skiljs åt med en tom rad. Timers skrivs med svensk enhet: `~{30%minuter}`.
 - `= Rubrik` delar receptet i avsnitt med egna ingredienslistor.
 - Rader som börjar med `>` visas som tips.
 - Bild och kort historia har samma filnamn som receptet. Bilder läggs bara i den svenska mappen; den engelska versionen hittar bilden via `id`.

@@ -1,12 +1,16 @@
-{{/* Returnerar sidans bild i given bredd, eller nil.
-     Recept: params.image i sidans mapp. Artiklar: params.image bredvid artikeln. */}}
+{{/* Returnerar sidans bild i given bredd, eller false.
+     Recept: params.image i receptets mapp. Artiklar: params.image bredvid artikeln.
+     Kapitel utan egen bild lånar första receptbilden. */}}
 {{ $page := .page }}
 {{ $w := .width | default 1200 }}
 {{ $res := false }}
 {{ with $page.Params.image }}
   {{ $res = $page.Resources.Get . }}
-  {{ if not $res }}
-    {{ with $page.File }}{{ $res = resources.Get (path.Join .Dir $page.Params.image) }}{{ end }}
+{{ end }}
+{{ if and (not $res) (eq $page.Kind "section") }}
+  {{ range $page.RegularPagesRecursive.ByWeight }}
+    {{ $p := . }}
+    {{ if not $res }}{{ with $p.Params.image }}{{ $res = $p.Resources.Get . }}{{ end }}{{ end }}
   {{ end }}
 {{ end }}
 {{ $out := false }}

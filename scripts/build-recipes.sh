@@ -54,8 +54,18 @@ prefix_weight() {
 find_image() {
   local base="$1" ext
   for ext in jpg jpeg png webp JPG JPEG PNG WEBP; do
-    [[ -f "$base.$ext" ]] && { echo "$base.$ext"; return; }
+    if [[ -f "$base.$ext" ]]; then echo "$base.$ext"; return 0; fi
   done
+  return 0
+}
+
+# "Förrätt" → "forratt", samma som Hugo gör med removePathAccents.
+slugify() {
+  jq -rn --arg s "$1" '$s | ascii_downcase
+    | gsub("[åäàáâã]"; "a") | gsub("[öòóôõø]"; "o") | gsub("[éèêë]"; "e")
+    | gsub("[üùúû]"; "u") | gsub("[íìîï]"; "i") | gsub("ç"; "c") | gsub("ñ"; "n")
+    | gsub("[ÅÄÀÁÂÃ]"; "a") | gsub("[ÖÒÓÔÕØ]"; "o") | gsub("[ÉÈÊË]"; "e") | gsub("[ÜÙÚÛ]"; "u")
+    | gsub("[^a-z0-9]+"; "-") | ltrimstr("-") | rtrimstr("-")'
 }
 
 errors=0
@@ -85,6 +95,13 @@ for lang in "${LANGS[@]}"; do
       # Kapitel: ordning från mappens siffra.
       w="$(prefix_weight "$(basename "$(dirname "$rel")")")"
       awk -v w="$w" 'NR==1 && /^---$/ {print; print "weight: " w; next} {print}' "$f" > "$target"
+    elif [[ "$top" == blogg && "$name" != _index.md ]]; then
+      # Artikel → egen mapp, så att bilderna den nämner följer med.
+      bundle="$dest/$dir/${name%.md}"
+      mkdir -p "$bundle"; cp "$f" "$bundle/index.md"
+      while IFS= read -r -d '' img; do
+        if grep -qF "$(basename "$img")" "$f"; then cp "$img" "$bundle/"; fi
+      done < <(find "$(dirname "$f")" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.svg' \) -print0)
     else
       cp "$f" "$target"
     fi
@@ -93,7 +110,7 @@ for lang in "${LANGS[@]}"; do
   # Bilder och andra filer i artikelmappar följer med.
   while IFS= read -r -d '' f; do
     rel="${f#"$SRC/$lang/"}"
-    [[ "$rel" == recept/* ]] && continue
+    [[ "$rel" == recept/* || "$rel" == blogg/* ]] && continue
     d="$(strip_prefixes "$(dirname "$rel")")"
     mkdir -p "$dest/$d"; cp "$f" "$dest/$d/"
   done < <(find "$SRC/$lang" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.svg' \) -print0)
@@ -107,6 +124,15 @@ for lang in "${LANGS[@]}"; do
     if ! "$COOK" recipe "$f" -f json > "$json" 2> "$TMP/cook.err"; then
       echo "FEL i $rel:" >&2; cat "$TMP/cook.err" >&2
       errors=$((errors + 1)); continue
+    fi
+    # CookCLI varnar men stoppar inte; visa varningarna och stoppa vid trasig metadata.
+    sed -E 's/\x1b\[[0-9;]*m//g; s/^ *WARN *//' "$TMP/cook.err" | grep -vE "Unsupported value for key|Invalid single word name" > "$TMP/cook.warn" || true
+    if [[ -s "$TMP/cook.warn" ]]; then
+      if grep -qi "yaml" "$TMP/cook.warn"; then
+        echo "FEL i $rel:" >&2; sed 's/^/  /' "$TMP/cook.warn" >&2
+        errors=$((errors + 1)); continue
+      fi
+      echo "Varning i $rel:"; sed 's/^/  /' "$TMP/cook.warn"
     fi
     id="$(jq -r '.metadata.map.id // empty' "$json")"
     title="$(jq -r '.metadata.map.title // empty' "$json")"
@@ -126,7 +152,7 @@ for lang in "${LANGS[@]}"; do
 
     img="$(find_image "$base")"
     if [[ -n "$img" && "$lang" == "$MAIN_LANG" ]]; then IMAGE_BY_ID[$id]="$img"; fi
-    [[ -z "$img" ]] && img="${IMAGE_BY_ID[$id]:-}"
+    if [[ -z "$img" ]]; then img="${IMAGE_BY_ID[$id]:-}"; fi
     image_name=""
     if [[ -n "$img" ]]; then
       image_name="bild.${img##*.}"; image_name="${image_name,,}"
@@ -134,7 +160,8 @@ for lang in "${LANGS[@]}"; do
     fi
 
     # Sidan: JSON-frontmatter (Hugo läser det direkt) + kort historia som brödtext.
-    jq --arg id "$id" --arg image "$image_name" --arg src "$rel" '
+    jq --arg lang "$lang" -f "$ROOT/scripts/recipe.jq" "$json" > "$TMP/recipe.view.json"
+    jq --arg id "$id" --arg image "$image_name" --arg src "$rel" --slurpfile view "$TMP/recipe.view.json" '
       (.metadata.map) as $m
       | def list($k): ($m[$k] // []) | if type == "array" then . else [.] end | map(tostring);
       {
@@ -153,8 +180,9 @@ for lang in "${LANGS[@]}"; do
           image: (if $image == "" then null else $image end),
           servings: ($m.servings // null),
           time: ($m.time // null),
+          totalTime: ($m.totalTime // null),
           source: $src,
-          recipe: .
+          recipe: $view[0]
         }
       } | with_entries(select(.value != null))
     ' "$json" > "$bundle/index.md"
@@ -174,9 +202,9 @@ if [[ -f "$ROOT/i18n/en.toml" ]]; then
     for pair in "sv:$sv" "en:$en"; do
       l="${pair%%:*}"; name="${pair#*:}"
       [[ -d "$OUT/$l" ]] || continue
-      slug="$(jq -rn --arg s "$name" '$s | ascii_downcase')"
-      slug="$(iconv -f utf-8 -t ascii//TRANSLIT <<<"$slug" 2>/dev/null || echo "$slug")"
-      slug="$(sed -E 's/[^a-z0-9]+/-/g; s/^-|-$//g' <<<"$slug")"
+      slug="$(slugify "$name")"
+      # Bara kategorier som faktiskt används får en sida.
+      grep -rqF -- "$name" "$SRC/$l" || continue
       d="$OUT/$l/kategori/$slug"
       if [[ -f "$d/_index.md" ]]; then
         if ! grep -q '^translationKey:' "$d/_index.md"; then
@@ -224,7 +252,7 @@ for lang in "${LANGS[@]}"; do
   for tax in tags restaurang forfattare kategori; do
     {
       awk -F'\t' -v l="$lang" -v t="$tax" '$1==l && $2==t {print $3}' "$TMP/labels.tsv"
-      find "$OUT/$lang" -name '*.md' ! -name '_index.md' ! -path '*/recept/*' -print0 | xargs -0 -r awk -v k="$tax" 'FNR==1 {fm=0} FNR==1 && /^---$/ {fm=1; next} fm && /^---$/ {fm=0; nextfile} fm && $0 ~ "^"k":" {sub("^"k":[[:space:]]*", ""); gsub(/[\[\]"]/, ""); n=split($0, a, ","); for (i=1;i<=n;i++) {gsub(/^ +| +$/, "", a[i]); if (a[i]!="") print a[i]}}'
+      find "$OUT/$lang" -name '*.md' ! -name '_index.md' ! -path "$OUT/$lang/recept/*" -print0 | xargs -0 -r awk -v k="$tax" 'FNR==1 {fm=0} FNR==1 && /^---$/ {fm=1; next} fm && /^---$/ {fm=0; nextfile} fm && $0 ~ "^"k":" {sub("^"k":[[:space:]]*", ""); gsub(/[\[\]"]/, ""); n=split($0, a, ","); for (i=1;i<=n;i++) {gsub(/^ +| +$/, "", a[i]); if (a[i]!="") print a[i]}}'
     } | sort | uniq -c | awk -v l="$lang" -v t="$tax" '$1==1 {sub(/^ *1 /, ""); print "  " l "/" t ": " $0}'
   done
 done

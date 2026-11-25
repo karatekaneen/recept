@@ -1,0 +1,38 @@
+{{/* Schema.org: Recipe på receptsidor, BlogPosting på artiklar. */}}
+{{ if and .IsPage (eq .Section "recept") }}
+  {{ $r := .Params.recipe }}
+  {{ $data := dict
+    "@context" "https://schema.org"
+    "@type" "Recipe"
+    "name" .Title
+    "description" (.Description | default "")
+    "inLanguage" site.Language.Lang
+    "url" .Permalink
+    "recipeIngredient" $r.ingredients
+  }}
+  {{ $steps := slice }}
+  {{ range $r.steps }}{{ $steps = $steps | append (dict "@type" "HowToStep" "text" .) }}{{ end }}
+  {{ $data = merge $data (dict "recipeInstructions" $steps) }}
+  {{ with .Params.servings }}{{ $data = merge $data (dict "recipeYield" .) }}{{ end }}
+  {{/* Google kräver ISO 8601 (t.ex. PT3H); fritext som "3 timmar" skickas inte med. */}}
+  {{ with .Params.totalTime }}{{ $data = merge $data (dict "totalTime" .) }}{{ end }}
+  {{ if not .Date.IsZero }}{{ $data = merge $data (dict "datePublished" (.Date.Format "2006-01-02")) }}{{ end }}
+  {{ with .Params.kategori }}{{ $data = merge $data (dict "recipeCategory" (delimit . ", ")) }}{{ end }}
+  {{ with .Params.tags }}{{ $data = merge $data (dict "keywords" (delimit . ", ")) }}{{ end }}
+  {{ with .Params.forfattare }}{{ $data = merge $data (dict "author" (dict "@type" "Person" "name" (index . 0))) }}{{ end }}
+  {{ with partial "image.html" (dict "page" . "width" 1200) }}{{ $data = merge $data (dict "image" (slice .Permalink)) }}{{ end }}
+  <script type="application/ld+json">{{ $data | jsonify | safeJS }}</script>
+{{ else if and .IsPage (eq .Section "blogg") }}
+  {{ $data := dict
+    "@context" "https://schema.org"
+    "@type" "BlogPosting"
+    "headline" .Title
+    "description" (.Description | default (.Summary | plainify))
+    "inLanguage" site.Language.Lang
+    "url" .Permalink
+    "datePublished" (.Date.Format "2006-01-02")
+  }}
+  {{ with .Params.forfattare }}{{ $data = merge $data (dict "author" (dict "@type" "Person" "name" (index . 0))) }}{{ end }}
+  {{ with partial "image.html" (dict "page" . "width" 1200) }}{{ $data = merge $data (dict "image" (slice .Permalink)) }}{{ end }}
+  <script type="application/ld+json">{{ $data | jsonify | safeJS }}</script>
+{{ end }}
