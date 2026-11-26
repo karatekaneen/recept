@@ -34,7 +34,8 @@ innehall/
 title: Kanelbullar
 id: kanelbullar
 description: Klassiska bullar med kardemumma i degen.
-servings: 30 bullar
+servings: 30          # ett tal; används av portionsväljaren
+enhet: bullar         # valfritt, annars "portioner"
 time: 3 timmar
 tags: [bakning, fika, jul]
 kategori: [Bakverk]
@@ -51,6 +52,7 @@ Smält @&smör i en #kastrull{} och låt svalna i ~{10%minutes}.
 > Mormors tips: dubbel sats, frys hälften.
 ```
 
+- `servings` gör att receptsidan får en portionsväljare som räknar om ingredienserna. Mängder skrivna med `=` (t.ex. `@salt{=1%tsk}`) skalas inte, och inte heller mängder som står i stegens text.
 - `title` och `id` är obligatoriska. `id` är receptets fasta namn och är **samma i alla språk**.
 - Första stycket i ett avsnitt listar ingredienserna; stegen refererar till dem med `@&`. Ett ord: `@&smör`. Flera ord behöver klamrar: `@&gula ärtor{}`. Hänvisningar visas i stegen men inte en gång till i ingredienslistan.
 - Steg skiljs åt med en tom rad. Timers skrivs med svensk enhet: `~{30%minuter}`.

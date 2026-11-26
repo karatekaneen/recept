@@ -35,6 +35,15 @@ def amount:
 
 def clean_name: sub("^&"; "");
 
+# Talvärdet för en mängd som går att skala (för portionsväljaren), annars null.
+def scalable_value:
+  if . == null or (.scalable | not) or .value.type != "number" then null
+  else .value.value as $n
+    | if $n.type == "regular" then $n.value
+      elif $n.type == "fraction" then (($n.value.whole // 0) + $n.value.num / $n.value.den)
+      else null end
+  end;
+
 # "@&jäst" utan klamrar blir kvar som text i CookCLI; ta bort tecknen.
 def clean_text: gsub("@&(?<w>[^\\s.,;:!?)]+)"; "\(.w)");
 
@@ -55,7 +64,8 @@ def clean_text: gsub("@&(?<w>[^\\s.,;:!?)]+)"; "\(.w)");
   def ingredient_entry:
     $r.ingredients[.index]
     | select(.name | startswith("&") | not)
-    | {name: .name, amount: (.quantity | amount), note: (.note // "")};
+    | {name: .name, amount: (.quantity | amount), note: (.note // ""),
+       value: (.quantity | scalable_value), unit: (.quantity.unit // "")};
 
   [ $r.sections[]
     | {

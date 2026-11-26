@@ -179,6 +179,7 @@ for lang in "${LANGS[@]}"; do
           kind: "recipe",
           image: (if $image == "" then null else $image end),
           servings: ($m.servings // null),
+          servingsUnit: ($m.enhet // null),
           time: ($m.time // null),
           totalTime: ($m.totalTime // null),
           source: $src,

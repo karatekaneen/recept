@@ -3,4 +3,8 @@
 </footer>
 {{ $js := resources.Get "js/search.js" | js.Build (dict "minify" true) | fingerprint }}
 <script src="{{ "pagefind/pagefind-ui.js" | relURL }}" defer></script>
+{{ if and .IsPage .Params.servings }}
+{{ $scale := resources.Get "js/scale.js" | js.Build (dict "minify" true) | fingerprint }}
+<script src="{{ $scale.RelPermalink }}" defer></script>
+{{ end }}
 <script src="{{ $js.RelPermalink }}" defer data-placeholder="{{ i18n "searchPlaceholder" }}" data-bundle="{{ "pagefind/" | relURL }}"></script>

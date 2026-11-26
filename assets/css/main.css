@@ -108,6 +108,17 @@ main { padding-block: 1rem 5rem; }
 .facts { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 3rem; font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; }
 .facts dt { color: var(--muted); }
 .facts dd { margin: .2rem 0 0; }
+
+/* Portionsväljare */
+.scaler dd { display: flex; align-items: center; justify-content: center; gap: .35rem; flex-wrap: wrap; }
+.scale-btn { width: 2.75rem; height: 2.75rem; border: 1px solid var(--line); border-radius: 50%; background: none; color: var(--accent); font: 400 1.25rem/1 var(--sans); cursor: pointer; }
+.scale-btn:hover { border-color: var(--accent); color: var(--accent-hover); }
+.scaler input { width: 4.5rem; height: 2.75rem; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--text); font: 600 1.1rem var(--sans); text-align: center; -moz-appearance: textfield; }
+.scaler input::-webkit-outer-spin-button, .scaler input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.scaler input:focus { outline: none; border-bottom-color: var(--accent); }
+.scale-unit { margin-left: .25rem; }
+.scale-reset { font: inherit; letter-spacing: inherit; text-transform: inherit; background: none; border: 0; color: var(--accent); cursor: pointer; min-height: 2.75rem; padding: 0 .5rem; }
+.scale-note { margin: 1.5rem 0 0; color: var(--muted); font-size: .9rem; text-align: center; font-style: italic; }
 .print-btn { font: inherit; letter-spacing: inherit; text-transform: inherit; background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; min-height: 2.75rem; }
 
 /* Ingredienser som på en meny */
@@ -172,7 +183,8 @@ main { padding-block: 1rem 5rem; }
 @media print {
   :root { --bg: #fff; --text: #000; --soft: #222; --muted: #555; --line: #999; --accent: #000; --surface: #fff; --placeholder: #fff; color-scheme: light; }
   body { font-size: 11pt; }
-  .site-header, .site-footer, .labels, .read-more, .print-btn, .skip, .hero-icon { display: none !important; }
+  .site-header, .site-footer, .labels, .read-more, .print-btn, .skip, .hero-icon, .scale-btn, .scale-reset { display: none !important; }
+  .scaler input { border: 0; width: auto; max-width: 4rem; }
   main { padding: 0; }
   .hero { margin-bottom: 1.5rem; }
   .hero img { max-height: 7cm; }
