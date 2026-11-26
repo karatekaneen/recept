@@ -43,6 +43,7 @@ restaurang: [Operakällaren]
 forfattare: [Mormor Greta]
 date: 2026-11-25
 totalTime: PT3H        # valfritt, för Google (ISO 8601)
+testad: false          # valfritt; false visar "Otestat" på receptet
 ---
 = Deg
 @vetemjöl{8%dl}, @socker{1%dl}, @smör{100%g}(smält)

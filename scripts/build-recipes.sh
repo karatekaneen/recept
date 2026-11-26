@@ -182,6 +182,7 @@ for lang in "${LANGS[@]}"; do
           servingsUnit: ($m.enhet // null),
           time: ($m.time // null),
           totalTime: ($m.totalTime // null),
+          tested: (if $m | has("testad") then $m.testad else null end),
           source: $src,
           recipe: $view[0]
         }

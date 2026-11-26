@@ -43,4 +43,6 @@ kategoriSingular = "Kategori"
 
 mainMenu = "Huvudmeny"
 from = "Från"
+status = "Status"
+untested = "Otestat – inspiration, inte provlagat än"
 method = "Tillagning"

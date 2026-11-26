@@ -33,6 +33,7 @@
       {{ end }}
       {{ with .Params.time }}<div><dt>{{ i18n "time" }}</dt><dd>{{ . }}</dd></div>{{ end }}
       {{ with .Params.forfattare }}<div><dt>{{ i18n "from" }}</dt><dd>{{ delimit . ", " }}</dd></div>{{ end }}
+      {{ if eq .Params.tested false }}<div><dt>{{ i18n "status" }}</dt><dd>{{ i18n "untested" }}</dd></div>{{ end }}
       <div><dt class="visually-hidden">{{ i18n "print" }}</dt><dd><button class="print-btn" type="button" onclick="window.print()">{{ i18n "print" }}</button></dd></div>
     </dl>
   </div>
