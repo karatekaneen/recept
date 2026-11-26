@@ -19,10 +19,14 @@
       <div class="scaler" data-base="{{ . }}" data-lang="{{ site.Language.LanguageCode }}">
         <dt id="ger">{{ i18n "makes" }}</dt>
         <dd>
-          <button type="button" class="scale-btn" data-dir="-1" aria-label="{{ i18n "fewer" }}">−</button>
-          <input type="number" min="1" step="1" value="{{ . }}" inputmode="numeric" aria-labelledby="ger">
-          <button type="button" class="scale-btn" data-dir="1" aria-label="{{ i18n "more" }}">+</button>
-          <span class="scale-unit">{{ $.Params.servingsUnit | default (i18n "servingsUnit") }}</span>
+          <div class="scale-row">
+            <button type="button" class="scale-btn" data-dir="-1" aria-label="{{ i18n "fewer" }}">−</button>
+            <span class="scale-value">
+              <input type="number" min="1" step="1" value="{{ . }}" inputmode="numeric" aria-labelledby="ger">
+              <span class="scale-unit">{{ $.Params.servingsUnit | default (i18n "servingsUnit") }}</span>
+            </span>
+            <button type="button" class="scale-btn" data-dir="1" aria-label="{{ i18n "more" }}">+</button>
+          </div>
           <button type="button" class="scale-reset" hidden>{{ i18n "reset" }}</button>
         </dd>
       </div>
