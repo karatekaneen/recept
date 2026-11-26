@@ -88,7 +88,7 @@ h3 { font-size: 1.3rem; margin: 1.5rem 0 .5rem; }
 .drop-list .count { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
 @media (max-width: 51.99rem) {
   /* Mobil: panelen följer hela menyns bredd i stället för rubriken. */
-  .nav { position: relative; gap: .5rem 1.1rem; letter-spacing: .12em; }
+  .nav { position: relative; gap: .5rem 1rem; letter-spacing: .1em; font-size: .75rem; }
   .nav-drop { position: static; }
   .drop-panel { width: 100%; }
 }
@@ -97,9 +97,11 @@ h3 { font-size: 1.3rem; margin: 1.5rem 0 .5rem; }
 @media (max-width: 51.99rem) {
   /* Mobil: namnet överst, meny och språk på en rad, sökrutan under. */
   .site-header .wrap { gap: .75rem 1.5rem; }
-  .nav { flex: 1 1 auto; order: 1; }
+  .site-header .wrap { position: relative; }
+  .nav { flex: 1 1 100%; order: 1; justify-content: center; }
   .header-tools { display: contents; }
-  .lang { order: 2; }
+  /* Språkväljaren i övre hörnet, på samma rad som namnet. */
+  .lang { position: absolute; top: 1.5rem; right: 1.5rem; line-height: 2.6rem; }
   .search-box { order: 3; }
   .hero-icon { padding-top: 1rem; }
   .hero-icon .icon { width: 3.5rem; }
