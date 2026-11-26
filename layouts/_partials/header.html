@@ -8,6 +8,24 @@
         <a href="{{ .URL }}"{{ if or ($current.IsMenuCurrent "main" .) ($current.HasMenuCurrent "main" .) }} aria-current="page"{{ end }}>{{ .Name }}</a>
         {{ end }}
       {{ end }}
+      {{/* Rullgardiner med kategorier och taggar, flest recept först. */}}
+      {{ range slice "kategori" "tags" }}
+        {{ $tax := . }}
+        {{ with index site.Taxonomies $tax }}
+        {{ $list := site.GetPage (printf "/%s" $tax) }}
+        <details class="nav-drop">
+          <summary{{ if or (eq $current $list) (and (eq $current.Kind "term") (eq $current.Data.Plural $tax)) }} aria-current="page"{{ end }}>{{ i18n $tax }}</summary>
+          <div class="drop-panel">
+          <ul class="drop-list">
+            {{ range .ByCount }}
+            <li><a href="{{ .Page.RelPermalink }}"{{ if eq $current .Page }} aria-current="page"{{ end }}>{{ .Page.LinkTitle }}<span class="count">{{ .Count }}</span></a></li>
+            {{ end }}
+          </ul>
+          {{ with $list }}<a class="drop-all" href="{{ .RelPermalink }}">{{ i18n "allOf" }} {{ lower (i18n $tax) }}</a>{{ end }}
+          </div>
+        </details>
+        {{ end }}
+      {{ end }}
     </nav>
     <a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
     <div class="header-tools">

@@ -64,6 +64,35 @@ h3 { font-size: 1.3rem; margin: 1.5rem 0 .5rem; }
 .nav a[aria-current="page"], .nav a:hover { color: var(--accent); }
 .brand { order: -1; flex: 1 0 100%; text-align: center; font-family: var(--serif); font-size: 1.75rem; color: var(--text); text-decoration: none; }
 .header-tools { flex: 1 1 14rem; display: flex; justify-content: flex-end; align-items: center; gap: 1.25rem; }
+
+/* Rullgardiner i menyn: kategorier och taggar med antal recept */
+.nav { align-items: center; flex-wrap: wrap; row-gap: .5rem; }
+.nav-drop { position: relative; }
+.nav-drop summary { list-style: none; cursor: pointer; color: var(--text); display: flex; align-items: center; gap: .4rem; }
+.nav-drop summary::-webkit-details-marker { display: none; }
+.nav-drop summary::after { content: ""; width: .4rem; height: .4rem; border: solid currentColor; border-width: 0 1px 1px 0; transform: translateY(-.15rem) rotate(45deg); transition: transform .2s ease; }
+.nav-drop[open] summary::after { transform: translateY(.05rem) rotate(-135deg); }
+.nav-drop summary:hover, .nav-drop[open] summary, .nav-drop summary[aria-current="page"] { color: var(--accent); }
+.nav-drop > :not(summary) { letter-spacing: normal; text-transform: none; font-weight: 400; }
+.nav-drop[open] { z-index: 30; }
+.drop-panel {
+  position: absolute; left: 0; top: calc(100% + .75rem);
+  width: min(20rem, calc(100vw - 3rem)); max-height: min(30rem, 70vh);
+  display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--line);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+}
+.drop-list { flex: 1 1 auto; overflow-y: auto; margin: 0; padding: .5rem 0; list-style: none; font-size: 1rem; }
+.drop-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .4rem 1.25rem; color: var(--text); text-decoration: none; }
+.drop-list a:hover, .drop-list a:focus-visible, .drop-list a[aria-current="page"] { color: var(--accent); background: var(--placeholder); }
+.drop-list .count { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 51.99rem) {
+  /* Mobil: panelen följer hela menyns bredd i stället för rubriken. */
+  .nav { position: relative; gap: .5rem 1.1rem; letter-spacing: .12em; }
+  .nav-drop { position: static; }
+  .drop-panel { width: 100%; }
+}
+.drop-all { flex: none; padding: .7rem 1.25rem; border-top: 1px solid var(--line); font-size: .9rem; }
 .lang a { font-size: .8rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; text-decoration: none; }
 @media (max-width: 51.99rem) {
   /* Mobil: namnet överst, meny och språk på en rad, sökrutan under. */

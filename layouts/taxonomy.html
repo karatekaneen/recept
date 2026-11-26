@@ -4,7 +4,7 @@
   <hr class="rule">
 </header>
 <ul class="list-plain center">
-  {{ range .Data.Terms.Alphabetical }}
+  {{ range .Data.Terms.ByCount }}
   <li style="justify-content: center"><a href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a> <span class="muted small">{{ .Count }}</span></li>
   {{ end }}
 </ul>

@@ -6,13 +6,8 @@
 </header>
 
 <div class="wrap">
-{{ with site.Taxonomies.kategori }}
-  <h2 class="section-title">{{ i18n "kategori" }}</h2>
-  <ul class="grid">{{ range .Alphabetical }}{{ partial "card.html" .Page }}{{ end }}</ul>
-{{ end }}
-
 {{ $recipes := where site.RegularPages "Section" "recept" }}
-{{ with first 6 $recipes.ByDate.Reverse }}
+{{ with first 12 $recipes.ByDate.Reverse }}
 <h2 class="section-title">{{ i18n "latestRecipes" }}</h2>
 <ul class="grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</ul>
 {{ end }}
